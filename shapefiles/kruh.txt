@@ -1,0 +1,122 @@
+# Kruh
+
+# Tento dokument představuje inicializační soubor pro konkrétní GEOMETRICKÝ
+# útvar, se kterými pracuje aplikace Geometric Shapes.
+
+# KONVENCE PRO PSANÍ ÚDAJŮ:
+# - Dokument musí obsahovat čtyři sekce: DESCRIPTIVE_NAME, QUANTITIES, FORMULAS
+# a CONDITIONS a to v tomto uvedeném pořadí.
+# - Vyjma těchto čtyř oddílů dokument nesmí obsahovat nic jiného (kromě
+# komentářů a prázdných řádků - viz dále).
+# - Každá sekce musí být uvozena textem 'Section: ' (např. 'Section: FORMULAS').
+# - Každý jednotlivý údaj v libovolné sekci musí být napsán NA JEDNOM ŘÁDKU,
+# tzn. že řádky NESMÍ BÝT ZALAMOVÁNY. Pokud tvoříte dokument v textovém
+# editoru, který zalamuje ZOBRAZENÍ řádků na určitou šířku, ale nezalamuje
+# řádky samotné, je to samozřejmě v pořádku.
+# - Kdekoli v dokumentu jsou povoleny komentáře a prázdné řádky - program je
+# bude ignorovat. Komentář začíná znakem '#'. Komentář může začínat na začátku
+# řádku nebo na jakémkoli jiném místě řádku - za komentář je pak považován
+# veškerý text od jeho uvozovacího znaku '#' až po konec tohoto řádku.
+# - Další konvence pro dílčí části dokumentu jsou popsány v komentářích
+# k příslušné sekci.
+
+# --------------------------------------------------------------------------- #
+Section: DESCRIPTIVE_NAME
+
+# Popisný název geometrického útvaru včetně případné diakritiky a mezer
+
+kruh
+
+
+# --------------------------------------------------------------------------- #
+Section: QUANTITIES
+
+# Tento oddíl obsahuje tabulku metrických veličin geometrického útvaru,
+# jejich popis a informaci, zda se jedná o úhel.
+
+# Každý řádek odpovídá jedné veličině, kde jsou uvedeny její vlastnosti
+# oddělené znakem '|' v následujícím pořadí:
+# Značka veličiny| Krátký popis veličiny| Delší popis veličiny| text 'angle',
+# pokud daná veličina reprezentuje úhel (pokud ne, řádek zde končí).
+# Mezi jednotlivými subpoložkami každého řádku oddělenými znakem '|' mohou být
+# pro větší přehlednost mezery nebo tabulátory.
+
+r|  poloměr|    poloměr kruhu
+d|  průměr|     průměr kruhu
+S|  obsah|      obsah kruhu
+o|  obvod|      obvod kruhu
+
+
+# --------------------------------------------------------------------------- #
+Section: FORMULAS
+
+# Tento oddíl obsahuje seznam "minimální" sady vzorců, které jsou zapotřebí
+# k tomu, aby při postačujícím počtu hodnot libovolné kombinace známých
+# veličin (uživatelem zadaných nebo vypočítaných programem) ze seznamu
+# QUANTITIES bylo možné "postupným dosazováním" do jejich pravých stran spočítat
+# hodnoty všech ostatních veličin na levých stranách.
+
+# Program funguje tak, že po každém přiřazení hodnoty některé veličině
+# uživatelem se pokusí spočítat jednu nebo více hodnot dalších veličin.
+# Pakliže se podaří spočítat minimálně jednu novou hodnotu z dosud neznámých,
+# množina známých hodnot veličin se tím rozšíří a celý pokus o výpočet hodnot
+# dalších veličin se opakuje. Tento proces probíhá v cyklu až do té doby, kdy
+# se již nepodaří vypočítat žádnou novou hodnotu nebo všechny hodnoty útvaru
+# jsou vypočítány.
+
+# Veškeré značky veličin ve vzorcích musí odpovídat značkám z oddílu QUANTITIES.
+# Operátory a funkce ve vzorcích musí odpovídat konvencím programovacího
+# jazyka Python (včetně prefixu 'math.' před názvem matematických funkcí nebo
+# konstant, jako například Ludolfovo číslo "pí" - tj. 'math.pi').
+# Rovněž je třeba rozlišovat malá a velká písmena.
+
+r = d / 2
+d = 2 * r
+o = 2 * math.pi * r
+S = math.pi * r**2
+
+r = o / 2 / math.pi
+r = math.sqrt(S / math.pi)
+
+
+# --------------------------------------------------------------------------- #
+Section: CONDITIONS
+
+# Tento oddíl obsahuje podmínky, které musí být splněny při přiřazení hodnoty
+# některé veličině útvaru UŽIVATELEM.
+# Pokud by některá podmínka nebyla splněna, příslušný geometrický útvar by
+# nebylo možné sestrojit.
+
+# Obdobně jako u seznamu vzorců v oddílu FORMULAS jde o "minimální výčet"
+# podmínek - není třeba zde uvádět např. trojúhelníkovou nerovnost týkající se
+# stran a, b a úhlopříčky u v případě obdélníku, pokud seznam vzorců FORMULAS
+# obsahuje vzorce pro výpočet zbývající hodnoty na základě libovolných dvou
+# z této trojice, protože v takovém případě bude tato třetí hodnota spočítána
+# ihned poté, jakmile uživatel zadá (nebo program spočítá) hodnoty ostatních
+# dvou veličin. Uživatel tedy nebude mít příležitost zadat tuto třetí hodnotu
+# v rozporu se oněmi dvěma ostatními.
+
+# Podmínky musí být napsány tak, aby na levé straně nerovnice byla uvedena
+# pouze značka kontrolované veličiny a na pravé straně byl výraz, který stejně
+# jako v oddílu QUANTITIES obsahuje správné značky jiných veličin. Celá
+# tato nerovnice musí rovněž splňovat syntaxi programovacího jazyka Python.
+
+# DŮLEŽITÉ: Kromě podmínek uvedených níže, platí následující výchozí podmínky:
+# - Pokud daná veličina nepředstavuje úhel, může mít libovolnou hodnotu větší
+# než nula (tzn. musí být kladná).
+# - Pokud daná veličina představuje úhel, může mít libovolnou hodnotu větší
+# než nula a zároveň menší než 180 stupňů (resp. math.pi radiánů - math.pi
+# v Pythonu reprezentuje hodnotu Ludolfova čísla "pí").
+
+# Za nerovnicí s podmínkou následuje její popis, který je od nerovnice
+# oddělený znakem '|'. Tento popis se vypíše, pokud během přiřazování hodnoty
+# veličině uživatelem nebude odpovídající podmínka splněna, aby uživatel získal
+# informaci, proč jím zadanou hodnotu nelze této veličině přiřadit.
+
+# Před i za znakem '|' mohou být pro lepší přehlednost mezery nebo tabulátory -
+# program je bude ignorovat.
+
+# ----------
+# Tento geometrický útvar nemá definovány žádné podmínky, protože po přiřazení
+# hodnoty jedné libovolné veličině uživatelem aplikace spočítá hodnoty všech
+# ostatních veličin tohoto útvaru.

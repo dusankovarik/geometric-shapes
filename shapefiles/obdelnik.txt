@@ -1,0 +1,171 @@
+# Obdélník
+
+# Tento dokument představuje inicializační soubor pro konkrétní GEOMETRICKÝ
+# útvar, se kterými pracuje aplikace Geometric Shapes.
+
+# KONVENCE PRO PSANÍ ÚDAJŮ:
+# - Dokument musí obsahovat čtyři sekce: DESCRIPTIVE_NAME, QUANTITIES, FORMULAS
+# a CONDITIONS a to v tomto uvedeném pořadí.
+# - Vyjma těchto čtyř oddílů dokument nesmí obsahovat nic jiného (kromě
+# komentářů a prázdných řádků - viz dále).
+# - Každá sekce musí být uvozena textem 'Section: ' (např. 'Section: FORMULAS').
+# - Každý jednotlivý údaj v libovolné sekci musí být napsán NA JEDNOM ŘÁDKU,
+# tzn. že řádky NESMÍ BÝT ZALAMOVÁNY. Pokud tvoříte dokument v textovém
+# editoru, který zalamuje ZOBRAZENÍ řádků na určitou šířku, ale nezalamuje
+# řádky samotné, je to samozřejmě v pořádku.
+# - Kdekoli v dokumentu jsou povoleny komentáře a prázdné řádky - program je
+# bude ignorovat. Komentář začíná znakem '#'. Komentář může začínat na začátku
+# řádku nebo na jakémkoli jiném místě řádku - za komentář je pak považován
+# veškerý text od jeho uvozovacího znaku '#' až po konec tohoto řádku.
+# - Další konvence pro dílčí části dokumentu jsou popsány v komentářích
+# k příslušné sekci.
+
+# --------------------------------------------------------------------------- #
+Section: DESCRIPTIVE_NAME
+
+# Popisný název geometrického útvaru včetně případné diakritiky a mezer
+
+obdélník
+
+
+# --------------------------------------------------------------------------- #
+Section: QUANTITIES
+
+# Tento oddíl obsahuje tabulku metrických veličin geometrického útvaru,
+# jejich popis a informaci, zda se jedná o úhel.
+
+# Každý řádek odpovídá jedné veličině, kde jsou uvedeny její vlastnosti
+# oddělené znakem '|' v následujícím pořadí:
+# Značka veličiny| Krátký popis veličiny| Delší popis veličiny| text 'angle',
+# pokud daná veličina reprezentuje úhel (pokud ne, řádek zde končí).
+# Mezi jednotlivými subpoložkami každého řádku oddělenými znakem '|' mohou být
+# pro větší přehlednost mezery nebo tabulátory.
+
+a| strana a|        délka strany a
+b| strana b|        délka strany b
+S| obsah|           obsah obdélníku
+o| obvod|           obvod obdélníku
+u| úhlopříčka u|    délka úhlopříčky
+alfa| úhel alfa|    úhel mezi stranou a a úhlopříčkou u| angle
+beta| úhel beta|    úhel mezi stranou b a úhlopříčkou u| angle
+fi| úhel fí|        první z úhlů mezi úhlopříčkami; pokud je délka strany a větší než délka strany b, jedná se o odchylku přímek, na kterých úhlopříčky leží, v opačném případě jde o doplňkový úhel k odchylce těchto přímek| angle
+chi| úhel chí|      druhý z úhlů mezi úhlopříčkami; pokud je délka strany a menší než délka strany b, jedná se o odchylku přímek, na kterých úhlopříčky leží, v opačném případě jde o doplňkový úhel k odchylce těchto přímek| angle
+
+
+# --------------------------------------------------------------------------- #
+Section: FORMULAS
+
+# Tento oddíl obsahuje seznam "minimální" sady vzorců, které jsou zapotřebí
+# k tomu, aby při postačujícím počtu hodnot libovolné kombinace známých
+# veličin (uživatelem zadaných nebo vypočítaných programem) ze seznamu
+# QUANTITIES bylo možné "postupným dosazováním" do jejich pravých stran spočítat
+# hodnoty všech ostatních veličin na levých stranách.
+
+# Program funguje tak, že po každém přiřazení hodnoty některé veličině
+# uživatelem se pokusí spočítat jednu nebo více hodnot dalších veličin.
+# Pakliže se podaří spočítat minimálně jednu novou hodnotu z dosud neznámých,
+# množina známých hodnot veličin se tím rozšíří a celý pokus o výpočet hodnot
+# dalších veličin se opakuje. Tento proces probíhá v cyklu až do té doby, kdy
+# se již nepodaří vypočítat žádnou novou hodnotu nebo všechny hodnoty útvaru
+# jsou vypočítány.
+
+# Veškeré značky veličin ve vzorcích musí odpovídat značkám z oddílu QUANTITIES.
+# Operátory a funkce ve vzorcích musí odpovídat konvencím programovacího
+# jazyka Python (včetně prefixu 'math.' před názvem matematických funkcí nebo
+# konstant, jako například Ludolfovo číslo "pí" - tj. 'math.pi').
+# Rovněž je třeba rozlišovat malá a velká písmena.
+
+S = a * b
+a = S / b
+b = S / a
+
+o = 2 * (a + b)
+a = o / 2 - b
+b = o / 2 - a
+
+u = math.sqrt(a**2 + b**2)
+a = math.sqrt(u**2 - b**2)
+b = math.sqrt(u**2 - a**2)
+
+alfa = math.atan(b/a)
+a = b / math.tan(alfa)
+b = a * math.tan(alfa)
+
+a = u * math.cos(alfa)
+
+alfa = math.pi/2 - beta
+beta = math.pi/2 - alfa
+
+fi = 2 * alfa
+alfa = fi / 2
+
+chi = 2 * beta
+beta = chi / 2
+
+a = math.sqrt((u**2 + math.sqrt(u**4 - 4 * S**2)) / 2)
+
+a = o / 4 + math.sqrt(2 * u**2 - o**2 / 4) / 2
+
+a = (o + math.sqrt(o**2 - 16 * S)) / 4
+
+
+# --------------------------------------------------------------------------- #
+Section: CONDITIONS
+
+# Tento oddíl obsahuje podmínky, které musí být splněny při přiřazení hodnoty
+# některé veličině útvaru UŽIVATELEM.
+# Pokud by některá podmínka nebyla splněna, příslušný geometrický útvar by
+# nebylo možné sestrojit.
+
+# Obdobně jako u seznamu vzorců v oddílu FORMULAS jde o "minimální výčet"
+# podmínek - není třeba zde uvádět např. trojúhelníkovou nerovnost týkající se
+# stran a, b a úhlopříčky u v případě obdélníku, pokud seznam vzorců FORMULAS
+# obsahuje vzorce pro výpočet zbývající hodnoty na základě libovolných dvou
+# z této trojice, protože v takovém případě bude tato třetí hodnota spočítána
+# ihned poté, jakmile uživatel zadá (nebo program spočítá) hodnoty ostatních
+# dvou veličin. Uživatel tedy nebude mít příležitost zadat tuto třetí hodnotu
+# v rozporu se oněmi dvěma ostatními.
+
+# Podmínky musí být napsány tak, aby na levé straně nerovnice byla uvedena
+# pouze značka kontrolované veličiny a na pravé straně byl výraz, který stejně
+# jako v oddílu QUANTITIES obsahuje správné značky jiných veličin. Celá
+# tato nerovnice musí rovněž splňovat syntaxi programovacího jazyka Python.
+
+# DŮLEŽITÉ: Kromě podmínek uvedených níže, platí následující výchozí podmínky:
+# - Pokud daná veličina nepředstavuje úhel, může mít libovolnou hodnotu větší
+# než nula (tzn. musí být kladná).
+# - Pokud daná veličina představuje úhel, může mít libovolnou hodnotu větší
+# než nula a zároveň menší než 180 stupňů (resp. math.pi radiánů - math.pi
+# v Pythonu reprezentuje hodnotu Ludolfova čísla "pí").
+
+# Za nerovnicí s podmínkou následuje její popis, který je od nerovnice
+# oddělený znakem '|'. Tento popis se vypíše, pokud během přiřazování hodnoty
+# veličině uživatelem nebude odpovídající podmínka splněna, aby uživatel získal
+# informaci, proč jím zadanou hodnotu nelze této veličině přiřadit.
+
+# Před i za znakem '|' mohou být pro lepší přehlednost mezery nebo tabulátory -
+# program je bude ignorovat.
+
+a < o / 2 | Strana (a) musí mít menší délku, než kolik tvoří polovina obvodu obdélníku.
+o > 2 * a | Obvod obdélníku musí být větší než dvojnásobek délky strany (a).
+
+b < o / 2 | Strana (b) musí mít menší délku, než kolik tvoří polovina obvodu obdélníku.
+o > 2 * b | Obvod obdélníku musí být větší než dvojnásobek délky strany (b).
+
+u > a | Délka úhlopříčky obdélníku musí být větší než délka strany (a).
+a < u | Délka strany (a) musí být menší než délka úhlopříčky obdélníku.
+u > b | Délka úhlopříčky obdélníku musí být větší než délka strany (b).
+b < u | Délka strany (a) musí být menší než délka úhlopříčky obdélníku.
+
+o >= math.sqrt(S) * 4 | Obvod obdélníku musí být větší nebo roven než čtyřnásobek hodnoty druhé odmocniny jeho obsahu.
+S <= (o / 4)**2 | Obsah obdélníku musí být menší nebo roven než hodnota druhé mocniny z jedné čtvrtiny jeho obvodu.
+
+u >= math.sqrt(2 * S) | Délka úhlopříčky obdélníku musí být větší nebo rovna než hodnota druhé odmocniny z dvojnásobku jeho obsahu.
+S <= u**2 / 2 | Obsah obdélníku musí být menší nebo roven než hodnota jedné poloviny druhé mocniny délky jeho úhlopříčky.
+u >= math.sqrt(o**2 / 8) | Délka úhlopříčky obdélníku musí být větší nebo rovna než hodnota druhé odmocniny z jedné osminy druhé mocniny jeho obvodu.
+u < o / 2 | Délka úhlopříčky obdélníku musí být menší než polovina jeho obvodu.
+o <= math.sqrt(8 * u**2) | Obvod obdélníku musí být menší nebo roven než druhá odmocnina z osminásobku druhé mocniny délky jeho úhlopříčky.
+o > 2 * u | Obvod obdélníku musí být větší než dvojnásobek délky jeho úhlopříčky.
+
+alfa < math.pi / 2 | Velikost úhlu (alfa) musí být menší než (PI/2) neboli 90 stupňů.
+beta < math.pi / 2 | Velikost úhlu (beta) musí být menší než (PI/2) neboli 90 stupňů.
