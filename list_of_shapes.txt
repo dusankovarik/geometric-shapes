@@ -1,0 +1,29 @@
+# Soubor list_of_shapes.txt
+
+# Tento textový soubor obsahuje výčet dostupných geometrických útvarů,
+# jejichž obecné vlastnosti lze inicializovat ze samostatných textových
+# souborů a relativní cestu k těmto inicializačním souborům, aby aplikace
+# mohla provést inicializaci obecných vlastností příslušných geometrických
+# útvarů právě na základě prostých textových souborů a bylo ji tak možné
+# poměrně snadno rozšiřovat o útvary nové.
+
+# Každý řádek textu tohoto výčtu je tvořen "počítačovým názvem" geometrického
+# útvaru bez diakritiky, popisným názvem geometrického útvaru, který je vhodný
+# pro uživatelské výpisy a relativní cestou k příslušnému inicializačnímu
+# textovému souboru. Tyto tři údaje na každém řádku jsou odděleny znakem '|'.
+
+# "Počítačový název" geometrického útvaru nesmí obsahovat mezeru ani žádné jiné
+# speciální znaky kromě podtržítka. TENTO NÁZEV MUSÍ BÝT SHODNÝ S NÁZVEM
+# PŘÍSLUŠNÉHO TEXTOVÉHO SOUBORU (bez přípony .txt). Popisný název útvaru může
+# obsahovat libovolné znaky, mezery i diakritiku. Relativní cesta k souboru
+# NEOBSAHUJE jeho název.
+
+# Text nesmí obsahovat žádné jiné informace ani dodatečné znaky.
+# Komentáře začínající znakem '#' a prázdné řádky jsou povoleny.
+
+obdelnik|   obdélník|       shapefiles/
+kruh|       kruh|           shapefiles/
+ctverec|    čtverec|        shapefiles/
+krychle|    krychle|        shapefiles/
+kvadr|      kvádr|          shapefiles/
+valec|      rotační válec|  shapefiles/
